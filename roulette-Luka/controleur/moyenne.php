@@ -21,7 +21,7 @@ if(isset($_POST['listeClasses'])){
 #Sélection des élèves par apport à la classe sélectionné
 if(isset($_SESSION['nomC'])&&$_SESSION['nomC']!==""){
     $nomC=$_SESSION['nomC'];
-    $listeEleves = getMoyenneElevesByClasse($nomC);
+    $listeEleves = getMoyenneNotesByClasse($nomC);
 }
 
 
@@ -32,18 +32,17 @@ $classes = getClasses();
 
 #Selection des élèves par rapport à la classe
 if(isset($nomC)){
-    $listeEleves = getMoyenneElevesByClasse($nomC);
+    $listeEleves = getMoyenneNotesByClasse($nomC);
 }
 // traitement si necessaire des donnees recuperees
 
 if(isset($_POST['resetN'])){
     $resetNotes=resetNotes($nomC);
-    $listeEleves = getMoyenneElevesByClasse($nomC);
+    $listeEleves = getMoyenneNotesByClasse($nomC);
 }
 
 
 // appel du script de vue qui permet de gerer l'affichage des donnees
-$titre = "GaecSellier.fr";
 include "$racine/vue/vueEntete.php";
 include "$racine/vue/vueMoyenne.php"
 

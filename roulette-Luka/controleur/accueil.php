@@ -9,7 +9,11 @@ include_once "$racine/modele/bd.classes.inc.php";
 include_once "$racine/modele/bd.eleves.inc.php";
 include_once "$racine/modele/bd.notes.inc.php";
 
-$redirection="./?action=defaut";
+$redirection="./?action=accueil";
+
+
+// variables
+$classes = getClasses();
 
 // recuperation des donnees GET, POST, et SESSION
 
@@ -22,70 +26,34 @@ if(isset($_POST['listeClasses'])){
 if(isset($_SESSION['nomC'])&&$_SESSION['nomC']!==""){
     $nomC=$_SESSION['nomC'];
     $eleves0=getElevesByStatut0($nomC);
-    $absents=getElevesAbsents($nomC);
 }
 
-#Envoie de la note donnée à l'élève tiré
-if(isset($_POST['note'])){
-    $note=$_POST['note'];
-    if($note == "Absent"){
-        $addAbscence=addAbscence($_SESSION['idEP']);
-    }else{
-        $addNote=addNote(intval($note),$_SESSION['idEP']);
-    }
-    $absents=getElevesAbsents($nomC);
-}
-
-if(isset($_POST['noteA'])){
-    $note=$_POST['noteA'];
-    $addNote=addNote(intval($note),$_POST['idEA']);
-    $delAbscence=delAbscence($_POST['idAA']);
+#Tirage au sort d'un élève
+if(isset($_POST['spin']) && !empty($eleves0)){
+    $nomC=$_SESSION['nomC'];
+    $elevesT=getRandomEleve($nomC);
+    $_SESSION['idUT']=$elevesT['idU'];
+    elevePassed($elevesT['idU']);
     $eleves0=getElevesByStatut0($nomC);
-    $absents=getElevesAbsents($nomC);
+}
+
+#Envoie d'une note
+if(isset($_POST['notation'])){
+    $nomC=$_SESSION['nomC'];
+    addNote($_POST['notation'],$_SESSION['idUT']);
+    elevePassed($elevesT['idU']);
+    $eleves0=getElevesByStatut0($nomC);
+}
+
+if(isset($_POST['reset'])){
+    $nomC=$_SESSION['nomC'];
+    resetPassage();
+    $eleves0=getElevesByStatut0($nomC);
 }
 
 // appel des fonctions permettant de recuperer les donnees utiles a l'affichage 
 
-#Tirage au sort d'un élève
-if(isset($_POST['spin'])){
-    if(isset($nomC) && $nomC!==""){
-        $randomEleve=getRandomEleve($nomC);
-        $idEP=$randomEleve[0]['idE'];
-        $_SESSION['idEP'] = $idEP;
-        $eP=elevePassed($idEP);
-        $eleves0=getElevesByStatut0($nomC);
-    }else{
-        echo "Aucune classe n'a été sélectionné !";
-    }
-}
-
-#Sélection de toutes les classes
-$classes = getClasses();
-
-
 // traitement si necessaire des donnees recuperees
-
-#Reset si tout les élèves sont passés
-if(isset($eleves0)){
-    if (count($eleves0) < 1) {
-        $resetPassage=resetPassage();
-        $eleves0=getElevesByStatut0($nomC);
-        $absents=getElevesAbsents($nomC);
-    }
-}
-
-#Reset si on appuye sur le bouton
-if(isset($_POST['reset'])){
-    if(isset($nomC) && $nomC!==""){
-        $resetPassage=resetPassage();
-        $eleves0=getElevesByStatut0($nomC);
-        resetAbscences($nomC);
-        $absents=getElevesAbsents($nomC);
-    }else{
-        echo "Aucune classe n'a été sélectionné !";
-    }
-}
-
 
 // appel du script de vue qui permet de gerer l'affichage des donnees
 

@@ -12,8 +12,9 @@
     <body class="bg-secondary text-white">
         <h1 class="text-center"> It's Roulette Time</h1>
         <nav class="navbar navbar-light bg-light">
-            <a class="navbar-brand" href="./?action=defaut"> <i class="bi bi-house"></i> Accueil</a>
+            <a class="navbar-brand" href="./?action=accueil"> <i class="bi bi-house"></i> Accueil</a>
             <a class="navbar-brand" href="./?action=moyenne"> <i class="bi bi-calculator"></i> Moyenne</a>
+            <a class="navbar-brand" href="./?action=defaut"> <i class="bi bi-box-arrow-left"></i></i>Déconnexion</a>
         </nav>
         <div class="text-center mt-2">
             <form action=<?php echo $redirection ?> method="POST">

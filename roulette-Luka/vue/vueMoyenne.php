@@ -2,14 +2,19 @@
     <form action="./?action=moyenne" method="POST">
         <input type="submit" name="resetN" value="RESET">
     </form> 
-    <?php
-    echo "<table>";
-    echo "<td id='listeEleves'>";
-    if(isset($nomC)){
-        foreach ($listeEleves as $e) {
-            echo "<tr>".$e['prenomE']." ".$e['nomE']." ".$e['moyenne_notes']."</tr><br>";
-        }
-    }
-    echo "</td>";
-    echo "</table>";
-    ?>
+    <div class="d-flex justify-content-center">
+        <table class="table table-bordered">
+            <tbody>
+                <?php
+                if (isset($nomC)) {
+                    foreach ($listeEleves as $e) {
+                        echo "<tr>";
+                        echo "<td class='text-white'>" . $e['prenomU'] . "</td><td class='text-white'>" . $e['nomU'] . "</td><td class='text-danger font-weight-bold'>" . $e['Moyenne_Notes'] . "</td>";
+                        echo "</tr>";
+                    }
+                }
+                ?>
+            </tbody>
+        </table>
+    </div>
+

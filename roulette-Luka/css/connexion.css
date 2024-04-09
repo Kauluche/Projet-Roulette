@@ -1,0 +1,52 @@
+*{
+    margin: 0;
+    padding: 0;
+  }
+  
+body{
+    height: 100vh;
+    width: 100vw;
+    background-color: black;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    align-items: center;
+    flex-direction: column;
+}
+
+/* Cadre de Connexion */
+
+#cadreConnexion{
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+    border: 0.1vw solid black;
+    border-radius: 1vw;
+    padding: 2vw;
+}
+
+#titreConnexion{
+    border-bottom: 0.1vw solid black;
+}
+
+#infoConnexion{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    flex-direction: column;
+    margin-top: 10%;
+
+}
+
+#id{
+    margin-bottom: 5%;
+}
+
+#mdp{
+    margin-bottom: 10%;
+}
+
+.toggle-password {
+    cursor: pointer;
+}

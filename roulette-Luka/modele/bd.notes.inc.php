@@ -2,11 +2,14 @@
 
 include_once "bd.inc.php";
 
-function addAbscence($idEP){
+function addAbscence($idU, $idC){
     try {
         $cnx = connexionPDO();
-        $req = $cnx->prepare("INSERT INTO abscences (dateA, idE) VALUES (CURDATE(), :idEP)");
-        $req->bindParam(':idEP', $idEP, PDO::PARAM_INT);
+        $req = $cnx->prepare("INSERT INTO absences (dateA, rectifier, idC, idU)
+                            VALUES (CURDATE(), 0, :idC, :idU);
+                            ");
+        $req->bindParam(':idU', $idU, PDO::PARAM_INT);
+        $req->bindParam(':idC', $idC, PDO::PARAM_INT);
         $req->execute();
     } catch (PDOException $e) {
         // En cas d'erreur, affichez un message d'erreur
@@ -18,7 +21,10 @@ function addAbscence($idEP){
 function delAbscence($idA){
     try {
         $cnx = connexionPDO();
-        $req = $cnx->prepare("DELETE FROM abscences WHERE idA = :idA;");
+        $req = $cnx->prepare("UPDATE absences
+                            SET rectifier = 1
+                            WHERE idA = :idA; 
+                            ");
         $req->bindParam(':idA', $idA, PDO::PARAM_INT);
         $req->execute();
     } catch (PDOException $e) {
@@ -28,12 +34,14 @@ function delAbscence($idA){
     return "Absence ajoutée avec succès.";
 }
 
-function addNote($note, $idE){
+function addNote($note, $idU){
     try {
         $cnx = connexionPDO();
-        $req = $cnx->prepare("INSERT INTO notes (valeurN, idE) VALUES (:valeurN, :idE)");
+        $req = $cnx->prepare("INSERT INTO notes (valeurN, idU)
+                            VALUES (:valeurN, :idU); -- Remplacez '15' par la valeur de la note et '1' par l'ID de l'utilisateur concerné
+                            ");
         $req->bindParam(':valeurN', $note, PDO::PARAM_STR);
-        $req->bindParam(':idE', $idE, PDO::PARAM_INT);
+        $req->bindParam(':idU', $idU, PDO::PARAM_INT);
         $req->execute();
     } catch (PDOException $e) {
         // En cas d'erreur, affichez un message d'erreur
@@ -45,7 +53,12 @@ function addNote($note, $idE){
 function resetNotes($nomC){
     try {
         $cnx = connexionPDO();
-        $req = $cnx->prepare("DELETE notes FROM notes INNER JOIN eleves ON notes.idE = eleves.idE INNER JOIN classes ON eleves.idC = classes.idC WHERE classes.nomC = :nomC ");
+        $req = $cnx->prepare("DELETE notes
+                            FROM notes
+                            INNER JOIN utilisateurs ON notes.idU = utilisateurs.idU
+                            INNER JOIN appartenir ON utilisateurs.idU = appartenir.idU
+                            INNER JOIN classes ON appartenir.idC = classes.idC
+                            WHERE classes.nomC = :nomC;");
         $req->bindParam(':nomC', $nomC, PDO::PARAM_STR);
         $req->execute();
     } catch (PDOException $e) {
@@ -55,10 +68,20 @@ function resetNotes($nomC){
     return "Note ajoutée avec succès.";
 }
 
-function resetAbscences($nomC){
+function resetabsences($nomC){
     try {
         $cnx = connexionPDO();
-        $req = $cnx->prepare("DELETE abscences FROM abscences INNER JOIN eleves ON abscences.idE = eleves.idE INNER JOIN classes ON eleves.idC = classes.idC WHERE classes.nomC = :nomC ");
+        $req = $cnx->prepare("UPDATE absences
+        SET rectifier = 1
+        WHERE idU IN (
+            SELECT idU
+            FROM appartenir
+            WHERE idC IN (
+                SELECT idC
+                FROM classes
+                WHERE nomC = :nomC
+            )
+        );");
         $req->bindParam(':nomC', $nomC, PDO::PARAM_STR);
         $req->execute();
     } catch (PDOException $e) {
@@ -67,5 +90,6 @@ function resetAbscences($nomC){
     }
     return "Note ajoutée avec succès.";
 }
+
 
 ?>
